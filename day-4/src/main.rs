@@ -1,3 +1,4 @@
+use std::cmp;
 use std::fs::read_to_string;
 
 struct Card {
@@ -9,7 +10,7 @@ struct Card {
 fn main() {
     let lines: Vec<String> = read_lines("cards.txt");
     let mut cards: Vec<Card> = vec![];
-    let mut scores: Vec<i32> = vec![];
+    let mut scores: Vec<usize> = vec![];
 
     for (idx, line) in lines.iter().enumerate() {
         let sequences = line.split(" | ").into_iter();
@@ -35,34 +36,39 @@ fn main() {
                     .collect::<Vec<i32>>();
             }
         }
-        // println!("{} win: {:?} actual: {:?}", idx, winning, actual);
 
         cards.push(Card {
-            index: (idx + 1),
+            index: idx,
             winning: winning,
             actual: actual,
         })
     }
 
-    for card in cards {
-        let mut counter: i32 = 0;
+    let mut card_counts: Vec<usize> = vec![1; cards.len()];
 
-        for num in card.actual {
+    cards.iter().for_each(|card: &Card| {
+        let mut counter: usize = 0;
+
+        for num in &card.actual {
             if card.winning.contains(&num) {
-                if counter == 0 {
-                    counter += 1;
-                } else {
-                    counter = counter * 2;
-                }
+                counter += 1;
             }
         }
 
+        let high_boundary = cmp::min(lines.len(), card.index + counter + 1);
+
+        (card.index + 1..high_boundary)
+            .into_iter()
+            .for_each(|n: usize| {
+                card_counts[n] += card_counts[card.index];
+            });
+
         scores.push(counter);
-    }
+    });
 
-    let sum: i32 = scores.iter().sum();
+    let sum: usize = card_counts.iter().sum();
 
-    println!("total score is: {}", sum)
+    println!("total amount of cards is: {}", sum)
 }
 
 fn read_lines(filename: &str) -> Vec<String> {
