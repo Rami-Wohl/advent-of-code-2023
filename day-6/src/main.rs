@@ -1,6 +1,9 @@
 use std::fs::read_to_string;
+use std::time::SystemTime;
 
 fn main() {
+    let start = SystemTime::now();
+
     let lines: Vec<String> = read_lines("input.txt");
 
     let times: Vec<i32> = lines[0]
@@ -81,16 +84,17 @@ fn main() {
     let range = 0..time_pt2;
 
     for n in range {
-        if ((n * time_pt2) - (n * n)) > distance_pt2 && lower == 0 {
+        if lower == 0 && ((n * time_pt2) - (n * n)) > distance_pt2 {
             lower = n;
         }
-        if ((n * time_pt2) - (n * n)) <= distance_pt2 && lower != 0 {
+        if lower != 0 && ((n * time_pt2) - (n * n)) <= distance_pt2 {
             higher = n;
             break;
         }
     }
 
     println!("no_of_ways pt 2 is {}", higher - lower);
+    println!("done in {:?}", start.elapsed().unwrap())
 }
 
 fn read_lines(filename: &str) -> Vec<String> {

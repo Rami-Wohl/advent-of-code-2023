@@ -155,7 +155,7 @@ fn main() {
 
     let mut gear_ratios: Vec<i32> = Vec::new();
 
-    for (id, group) in groups {
+    for (_id, group) in groups {
         if group.len() == 2 {
             gear_ratios.push(group[0] * group[1])
         }
