@@ -80,7 +80,7 @@ fn main() {
                         // ja dit is AIDS I know, ff bek houe pls
                         .replace("T", "10")
                         //"J" to "11" for pt. 1
-                        .replace("J", "11")
+                        .replace("J", "1")
                         .replace("Q", "12")
                         .replace("K", "13")
                         .replace("A", "14")
