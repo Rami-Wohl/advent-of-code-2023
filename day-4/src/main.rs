@@ -20,7 +20,8 @@ fn main() {
 
         for (idx, seq) in sequences.enumerate() {
             if idx == 0 {
-                let first_part = seq.trim().split(": ").into_iter().collect::<Vec<&str>>();
+                let first_part: Vec<&str> =
+                    seq.trim().split(": ").into_iter().collect::<Vec<&str>>();
 
                 winning = first_part[1]
                     .trim()
@@ -32,7 +33,7 @@ fn main() {
                 actual = seq
                     .split_ascii_whitespace()
                     .into_iter()
-                    .map(|n| n.trim().parse::<i32>().unwrap())
+                    .map(|n: &str| n.trim().parse::<i32>().unwrap())
                     .collect::<Vec<i32>>();
             }
         }
@@ -55,7 +56,7 @@ fn main() {
             }
         }
 
-        let high_boundary = cmp::min(lines.len(), card.index + counter + 1);
+        let high_boundary: usize = cmp::min(lines.len(), card.index + counter + 1);
 
         (card.index + 1..high_boundary)
             .into_iter()

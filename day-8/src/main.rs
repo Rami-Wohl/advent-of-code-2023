@@ -15,13 +15,13 @@ enum Step {
 }
 
 fn main() {
-    let start = SystemTime::now();
+    let start: SystemTime = SystemTime::now();
 
     let lines: Vec<String> = read_lines("input.txt");
 
-    let steps = &lines[0]
+    let steps: &Vec<Step> = &lines[0]
         .chars()
-        .map(|step| match step {
+        .map(|step: char| match step {
             'L' => Step::L,
             'R' => Step::R,
             _ => panic!("poop"),
@@ -30,14 +30,14 @@ fn main() {
 
     let mut all_paths: Vec<Path> = vec![];
 
-    (2..=lines.len() - 1).for_each(|n| {
+    (2..=lines.len() - 1).for_each(|n: usize| {
         let (start_path_as_str, dest_paths) = lines[n].split_once("=").unwrap();
         let start_path: String = start_path_as_str.trim().to_string();
 
         let (left_str, right_str) = dest_paths.split_once(", ").unwrap();
 
-        let left = left_str.trim().replace("(", "").to_string();
-        let right = right_str.trim().replace(")", "").to_string();
+        let left: String = left_str.trim().replace("(", "").to_string();
+        let right: String = right_str.trim().replace(")", "").to_string();
 
         all_paths.push(Path {
             start: start_path,
@@ -57,15 +57,15 @@ fn main() {
 
     let mut step_numbers_to_z: HashMap<&str, Vec<u128>> = HashMap::new();
 
-    'outer: for path in starting_paths {
-        let starting_path = path.start.as_str();
+    for path in starting_paths {
+        let starting_path: &str = path.start.as_str();
 
         let steps_for_starting_path: &mut Vec<u128> =
             step_numbers_to_z.entry(starting_path).or_insert(vec![]);
         let mut step_no: u128 = 0;
-        let mut arrived = false;
+        let mut arrived: bool = false;
 
-        let mut curr = path;
+        let mut curr: &Path = path;
 
         while !arrived {
             for step in steps {
@@ -74,11 +74,11 @@ fn main() {
                 let next_step = match step {
                     Step::L => all_paths
                         .iter()
-                        .find(|p| p.start == String::from(&curr.left))
+                        .find(|p: &&Path| p.start == String::from(&curr.left))
                         .unwrap(),
                     Step::R => all_paths
                         .iter()
-                        .find(|p| p.start == String::from(&curr.right))
+                        .find(|p: &&Path| p.start == String::from(&curr.right))
                         .unwrap(),
                 };
 
@@ -102,9 +102,9 @@ fn main() {
         .cloned()
         .collect();
 
-    let lcm = steps
+    let lcm: u128 = steps
         .iter()
-        .fold(steps[0], |acc, n| num::integer::lcm(acc, *n));
+        .fold(steps[0], |acc: u128, n: &u128| num::integer::lcm(acc, *n));
 
     println!("took {:?} steps to get to all Z's", lcm);
     println!("done in {:?}", start.elapsed().unwrap())

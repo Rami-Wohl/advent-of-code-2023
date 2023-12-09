@@ -3,10 +3,10 @@ use std::time::SystemTime;
 
 fn diff_until_zero(sequence: Vec<i32>, extrapolations: &mut Vec<i32>) -> Vec<i32> {
     //w[1] - w[0] here for pt1
-    let diffs: Vec<i32> = sequence.windows(2).map(|w| w[0] - w[1]).collect();
+    let diffs: Vec<i32> = sequence.windows(2).map(|w: &[i32]| w[0] - w[1]).collect();
 
     //take last elem here instead of first for pt1
-    let first_elem = diffs[0];
+    let first_elem: i32 = diffs[0];
 
     let sum_of_diffs: i32 = diffs.iter().sum();
 
@@ -29,7 +29,7 @@ fn find_next_number(line: &String) -> i32 {
     //take last elem here for pt. 1
     extrapolations.push(line_vec[0]);
 
-    let diffs_vec = diff_until_zero(line_vec, extrapolations);
+    let diffs_vec: Vec<i32> = diff_until_zero(line_vec, extrapolations);
 
     let sum_for_line: i32 = diffs_vec.iter().sum();
 
@@ -37,7 +37,7 @@ fn find_next_number(line: &String) -> i32 {
 }
 
 fn main() {
-    let start = SystemTime::now();
+    let start: SystemTime = SystemTime::now();
 
     let lines: Vec<String> = read_lines("input.txt");
 

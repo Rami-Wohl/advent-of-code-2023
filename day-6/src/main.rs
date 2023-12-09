@@ -2,7 +2,7 @@ use std::fs::read_to_string;
 use std::time::SystemTime;
 
 fn main() {
-    let start = SystemTime::now();
+    let start: SystemTime = SystemTime::now();
 
     let lines: Vec<String> = read_lines("input.txt");
 
@@ -12,7 +12,7 @@ fn main() {
         .1
         .trim()
         .split_ascii_whitespace()
-        .map(|str| str.parse::<i32>().unwrap())
+        .map(|str: &str| str.parse::<i32>().unwrap())
         .collect();
 
     let distances: Vec<i32> = lines[1]
@@ -21,7 +21,7 @@ fn main() {
         .1
         .trim()
         .split_ascii_whitespace()
-        .map(|str| str.parse::<i32>().unwrap())
+        .map(|str: &str| str.parse::<i32>().unwrap())
         .collect();
 
     println!("times: {:?}", times);
@@ -29,13 +29,13 @@ fn main() {
 
     let mut ways_per_race: Vec<i32> = vec![];
 
-    (0..times.len()).for_each(|race_number| {
+    (0..times.len()).for_each(|race_number: usize| {
         let mut lower: i32 = 0;
         let mut higher: i32 = 0;
-        let time = times[race_number];
-        let distance = distances[race_number];
+        let time: i32 = times[race_number];
+        let distance: i32 = distances[race_number];
 
-        let range = 0..time;
+        let range: std::ops::Range<i32> = 0..time;
 
         for n in range {
             if ((n * time) - (n * n)) > distance && lower == 0 {
@@ -81,7 +81,7 @@ fn main() {
     let mut lower: i64 = 0;
     let mut higher: i64 = 0;
 
-    let range = 0..time_pt2;
+    let range: std::ops::Range<i64> = 0..time_pt2;
 
     for n in range {
         if lower == 0 && ((n * time_pt2) - (n * n)) > distance_pt2 {

@@ -9,7 +9,7 @@ struct Mapping {
 }
 
 fn main() {
-    let start = SystemTime::now();
+    let start: SystemTime = SystemTime::now();
     let mut lowest: i64 = 0;
     let lines: Vec<String> = read_lines("input.txt");
     let line_1: &String = &lines[0];
@@ -106,13 +106,49 @@ fn main() {
 
     // //way too high
 
-    let range = 0..100_000_000;
+    let range: std::ops::Range<i64> = 0..100_000_000;
 
     'outer: for n in range {
         let mut current_number: i64 = n;
         let mut target: i64 = n;
 
-        humidity_to_location_map.iter().for_each(|mapping| {
+        humidity_to_location_map
+            .iter()
+            .for_each(|mapping: &Mapping| {
+                let low: i64 = mapping.destination;
+                let high: i64 = mapping.destination + mapping.range;
+                if (low..=high).contains(&current_number) {
+                    target = current_number - mapping.diff;
+                }
+            });
+
+        current_number = target;
+
+        temperature_to_humidity_map
+            .iter()
+            .for_each(|mapping: &Mapping| {
+                let low: i64 = mapping.destination;
+                let high: i64 = mapping.destination + mapping.range;
+                if (low..=high).contains(&current_number) {
+                    target = current_number - mapping.diff;
+                }
+            });
+
+        current_number = target;
+
+        light_to_temperature_map
+            .iter()
+            .for_each(|mapping: &Mapping| {
+                let low: i64 = mapping.destination;
+                let high: i64 = mapping.destination + mapping.range;
+                if (low..=high).contains(&current_number) {
+                    target = current_number - mapping.diff;
+                }
+            });
+
+        current_number = target;
+
+        water_to_light_map.iter().for_each(|mapping: &Mapping| {
             let low: i64 = mapping.destination;
             let high: i64 = mapping.destination + mapping.range;
             if (low..=high).contains(&current_number) {
@@ -122,7 +158,19 @@ fn main() {
 
         current_number = target;
 
-        temperature_to_humidity_map.iter().for_each(|mapping| {
+        fertilizer_to_water_map
+            .iter()
+            .for_each(|mapping: &Mapping| {
+                let low: i64 = mapping.destination;
+                let high: i64 = mapping.destination + mapping.range;
+                if (low..=high).contains(&current_number) {
+                    target = current_number - mapping.diff;
+                }
+            });
+
+        current_number = target;
+
+        soil_to_fertilizer_map.iter().for_each(|mapping: &Mapping| {
             let low: i64 = mapping.destination;
             let high: i64 = mapping.destination + mapping.range;
             if (low..=high).contains(&current_number) {
@@ -132,7 +180,7 @@ fn main() {
 
         current_number = target;
 
-        light_to_temperature_map.iter().for_each(|mapping| {
+        seed_to_soil_map.iter().for_each(|mapping: &Mapping| {
             let low: i64 = mapping.destination;
             let high: i64 = mapping.destination + mapping.range;
             if (low..=high).contains(&current_number) {
@@ -140,47 +188,7 @@ fn main() {
             }
         });
 
-        current_number = target;
-
-        water_to_light_map.iter().for_each(|mapping| {
-            let low: i64 = mapping.destination;
-            let high: i64 = mapping.destination + mapping.range;
-            if (low..=high).contains(&current_number) {
-                target = current_number - mapping.diff;
-            }
-        });
-
-        current_number = target;
-
-        fertilizer_to_water_map.iter().for_each(|mapping| {
-            let low: i64 = mapping.destination;
-            let high: i64 = mapping.destination + mapping.range;
-            if (low..=high).contains(&current_number) {
-                target = current_number - mapping.diff;
-            }
-        });
-
-        current_number = target;
-
-        soil_to_fertilizer_map.iter().for_each(|mapping| {
-            let low: i64 = mapping.destination;
-            let high: i64 = mapping.destination + mapping.range;
-            if (low..=high).contains(&current_number) {
-                target = current_number - mapping.diff;
-            }
-        });
-
-        current_number = target;
-
-        seed_to_soil_map.iter().for_each(|mapping| {
-            let low: i64 = mapping.destination;
-            let high: i64 = mapping.destination + mapping.range;
-            if (low..=high).contains(&current_number) {
-                target = current_number - mapping.diff;
-            }
-        });
-
-        if (1..=10).any(|idx| {
+        if (1..=10).any(|idx: usize| {
             let id: i64 = seed_numbers[idx * 2 - 2];
             let range: i64 = seed_numbers[idx * 2 - 1];
 
