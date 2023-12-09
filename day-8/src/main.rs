@@ -1,8 +1,10 @@
+use num;
 use std::collections::HashMap;
 use std::fs::read_to_string;
 use std::time::SystemTime;
-
+#[derive(Clone)]
 struct Path {
+    start: String,
     left: String,
     right: String,
 }
@@ -26,7 +28,7 @@ fn main() {
         })
         .collect::<Vec<Step>>();
 
-    let mut paths_map: HashMap<String, Path> = HashMap::new();
+    let mut all_paths: Vec<Path> = vec![];
 
     (2..=lines.len() - 1).for_each(|n| {
         let (start_path_as_str, dest_paths) = lines[n].split_once("=").unwrap();
@@ -37,47 +39,75 @@ fn main() {
         let left = left_str.trim().replace("(", "").to_string();
         let right = right_str.trim().replace(")", "").to_string();
 
-        println!("row: {}, left: {}, right: {}", n + 1, left, right);
-
-        paths_map.insert(start_path, Path { left, right });
+        all_paths.push(Path {
+            start: start_path,
+            left,
+            right,
+        });
     });
 
-    let mut step_no = 0;
-    let mut arrived: bool = false;
-
-    paths_map
+    let starting_paths: Vec<&Path> = all_paths
         .iter()
-        .for_each(|(k, v)| println!("k: {}, vl: {}, vr: {}", k, v.left, v.right));
+        .filter(|k| k.start.chars().nth(2).unwrap() == 'A')
+        .collect();
 
-    let mut current_path = paths_map
+    starting_paths
         .iter()
-        .find(|(k, _p)| k == &&String::from("AAA"))
-        .unwrap();
+        .for_each(|p| println!("s: {}, vl: {}, vr: {}", p.start, p.left, p.right));
 
-    while !arrived {
-        for step in steps {
-            step_no += 1;
+    let mut step_numbers_to_z: HashMap<&str, Vec<u128>> = HashMap::new();
 
-            let path_options: &Path = current_path.1;
+    'outer: for path in starting_paths {
+        let starting_path = path.start.as_str();
 
-            current_path = match step {
-                Step::L => paths_map
-                    .iter()
-                    .find(|(k, _p)| **k == String::from(&path_options.left))
-                    .unwrap(),
-                Step::R => paths_map
-                    .iter()
-                    .find(|(k, _p)| **k == String::from(&path_options.right))
-                    .unwrap(),
-            };
+        let steps_for_starting_path: &mut Vec<u128> =
+            step_numbers_to_z.entry(starting_path).or_insert(vec![]);
+        let mut step_no: u128 = 0;
+        let mut arrived = false;
 
-            if *current_path.0 == String::from("ZZZ") || step_no > 100000 {
-                arrived = true;
+        let mut curr = path;
+
+        while !arrived {
+            for step in steps {
+                step_no += 1;
+
+                let next_step = match step {
+                    Step::L => all_paths
+                        .iter()
+                        .find(|p| p.start == String::from(&curr.left))
+                        .unwrap(),
+                    Step::R => all_paths
+                        .iter()
+                        .find(|p| p.start == String::from(&curr.right))
+                        .unwrap(),
+                };
+
+                curr = next_step;
+
+                if next_step.start.chars().nth(2).unwrap() == 'Z' {
+                    steps_for_starting_path.push(step_no);
+                    arrived = true;
+                    continue 'outer;
+                }
             }
         }
     }
 
-    println!("took {} steps to get to ZZZ", step_no);
+    step_numbers_to_z
+        .iter()
+        .for_each(|(k, v)| println!("for start {} step numbers to z are {:?}", k, v));
+
+    let steps: Vec<u128> = step_numbers_to_z
+        .iter()
+        .map(|(k, v)| v.iter().next().unwrap())
+        .cloned()
+        .collect();
+
+    let lcm = steps
+        .iter()
+        .fold(steps[0], |acc, n| num::integer::lcm(acc, *n));
+
+    println!("took {:?} steps to get to all Z's", lcm);
     println!("done in {:?}", start.elapsed().unwrap())
 }
 
