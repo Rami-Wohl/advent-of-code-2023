@@ -13,7 +13,7 @@ fn main() {
     let mut scores: Vec<usize> = vec![];
 
     for (idx, line) in lines.iter().enumerate() {
-        let sequences = line.split(" | ").into_iter();
+        let sequences: std::str::Split<'_, &str> = line.split(" | ").into_iter();
 
         let mut winning: Vec<i32> = vec![];
         let mut actual: Vec<i32> = vec![];
