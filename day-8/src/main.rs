@@ -87,7 +87,6 @@ fn main() {
                 if next_step.start.chars().nth(2).unwrap() == 'Z' {
                     steps_for_starting_path.push(step_no);
                     arrived = true;
-                    continue 'outer;
                 }
             }
         }
@@ -99,7 +98,7 @@ fn main() {
 
     let steps: Vec<u128> = step_numbers_to_z
         .iter()
-        .map(|(k, v)| v.iter().next().unwrap())
+        .map(|(_k, v)| v.iter().next().unwrap())
         .cloned()
         .collect();
 
